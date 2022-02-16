@@ -53,6 +53,7 @@ main{
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .game-container{
@@ -71,6 +72,14 @@ main{
     align-items: center;
     flex-wrap: wrap;
     border: 1px solid black;
+    cursor: pointer;
+}
+
+.message{
+    font-weight: bold;
+    font-size: 30px;
+    color: red;
+    text-align: center;
 }
 
 /* FOOTER --------------------------- */

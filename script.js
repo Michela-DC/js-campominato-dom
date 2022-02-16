@@ -3,9 +3,35 @@
 // con difficoltà 2 => tra 1 e 81
 // con difficoltà 3 => tra 1 e 49
 
-const gameContainer = document.querySelector('.game-container');
+
 const levels = document.getElementById('levels');
 const playBtn = document.getElementById('btn-play');
+const gameContainer = document.querySelector('.game-container');
+const message = document.querySelector('.message');
+
+// funzione per generare numeri random in un certo range
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+// Devo generare numeri random da 1 a 16, quindi creo un array vuoto
+const numbers = [];
+// faccio un ciclo in cui vengono generati numeri random finché non ci sono 16 numeri dentro l'array ma non devono essere doppi 
+    // - conviene usare il do-while perché il numero, come prima cosa, deve essere generato e poi perché non so quante volte dovrò ciclare 
+do{
+    const randomNumber = getRandomIntInclusive(1, 16)
+
+    // se il numero NON è già presente dentro l'array allora lo pusho 
+    if( !numbers.includes(randomNumber) ){ //The includes() method determines whether an array includes a certain value among its entries, returning true or false as appropriate.
+    // in questo caso con l'if dico che l'operazione deve essere eseguita quando .includes ritorna false
+        numbers.push(randomNumber);
+    }
+
+}while (numbers.length < 16)
+console.log(numbers)
+
 
 // A seconda del livello si crea una griglia con numero di caselle diverso quindi:
 // di base devo creare un ciclo for per far generare le caselle poi a seconda del livello il ciclo prenderà valori diversi, ovvero quante volte cicla e la width delle celle cambia a seconda del numero di colonne
@@ -35,6 +61,10 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
             columns = 7;
             console.log(gameContainer);
             break;
+
+        default:
+            squares = 100;
+            columns = 10;
     }
 
     // questa riga di codice fa in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
@@ -47,7 +77,25 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         box.style.width = `calc(100% / ${columns})`;
         box.append(i);
         gameContainer.append(box);
+
+        // ogni volta che clicco aggancio una casella usando il this
+        box.addEventListener('click', function(){          
+            const clickedNumber = parseInt(this.innerHTML); //devo fare il parseInt perché inizialmente dentro a box c'è una stringa
+            console.log(clickedNumber);
+            
+            // se la casella che clicco ha dentro un numero che corrisponde a uno di quelli dentro l'array numbers allora è una bomba
+            if (numbers.includes(clickedNumber)){
+                console.log('bomba!')
+                box.style.backgroundColor = 'red';
+
+            } else{
+                box.style.backgroundColor = '#1E90FF';
+            }
+
+        })
     }
 }
 
 playBtn.addEventListener('click',startGame);
+
+

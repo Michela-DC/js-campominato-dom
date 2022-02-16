@@ -3,7 +3,7 @@
 // con difficoltà 2 => tra 1 e 81
 // con difficoltà 3 => tra 1 e 49
 
-
+const main = document.getElementsByTagName('main')[0];
 const levels = document.getElementById('levels');
 const playBtn = document.getElementById('btn-play');
 const gameContainer = document.querySelector('.game-container');
@@ -15,6 +15,7 @@ function getRandomIntInclusive(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
+
 
 // Devo generare numeri random da 1 a 16, quindi creo un array vuoto
 const numbers = [];
@@ -46,13 +47,15 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
             squares = 100;
             columns = 10;
             console.log(gameContainer);
+            main.style.backgroundColor = '#7FFFD4'
             break;
-    
+
         case 'normal':
             console.log('level normal');
             squares = 81;
             columns = 9;
             console.log(gameContainer);
+            main.style.backgroundColor = "gold";
             break;
         
         case 'crazy':
@@ -60,6 +63,7 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
             squares = 49;
             columns = 7;
             console.log(gameContainer);
+            main.style.backgroundColor = "#FF6347";
             break;
 
         default:
@@ -70,6 +74,25 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
     // questa riga di codice fa in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
     gameContainer.innerHTML = ' ';
 
+    // funzione per selezionare le celle e deselezionarle
+    function selectBox() {
+        console.log(this.innerHTML);
+        const clickedBox = this; //il this si riferisce alla cella
+        const clickedNumber = parseInt(this.innerHTML); //aggiungendo .innerHTML mi riferisco al valore dentro la cella e devo fare il parseInt per trasformarlo da stringa in numero
+        
+        if (numbers.includes(clickedNumber)){
+            console.log('bomba!')
+            clickedBox.classList.add('bombBox');
+            message.style.display = 'block';
+            
+        } else{
+            clickedBox.classList.add('selectedBox');
+        }
+
+        // una volta che ho cliccato su una data cella voglio che questa non sia più cliccabile quindi le devo rimuovere l'event listener del click
+        clickedBox.removeEventListener('click', selectBox);
+    }
+
     //Una volta che viene scelto il caso si possono creare le celle con un ciclo for e le inserisco dentro il game container
     for(let i = 1; i <= squares; i++){
         const box = document.createElement('div');
@@ -78,24 +101,14 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         box.append(i);
         gameContainer.append(box);
 
-        // ogni volta che clicco aggancio una casella usando il this
-        box.addEventListener('click', function(){          
-            const clickedNumber = parseInt(this.innerHTML); //devo fare il parseInt perché inizialmente dentro a box c'è una stringa
-            console.log(clickedNumber);
-            
-            // se la casella che clicco ha dentro un numero che corrisponde a uno di quelli dentro l'array numbers allora è una bomba
-            if (numbers.includes(clickedNumber)){
-                console.log('bomba!')
-                box.style.backgroundColor = 'red';
-
-            } else{
-                box.style.backgroundColor = '#1E90FF';
-            }
-
-        })
+        // ho semplificato l'addEventListener creando la funzione selectBox (e nel css ho creato una classe apposta per le caselle selzionate)
+        box.addEventListener('click', selectBox);    
     }
+
 }
 
 playBtn.addEventListener('click',startGame);
 
 
+
+    

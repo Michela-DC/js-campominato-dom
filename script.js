@@ -17,6 +17,7 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
     // dichiaro le variabili per le caselle e le colonne che cambieranno a seconda del livello
 
     let squares, columns, bombs, points = 0;
+    const arrayBoxes = []; // array in cui andrò a salvare tutte le celle della griglia
 
     // creo i casi a seconda del livello
     switch (levels.value){
@@ -63,6 +64,7 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         box.style.width = `calc(100% / ${columns})`;
         box.append(i);
         gameContainer.append(box);
+        arrayBoxes.push(box); // vado a pushare tutte le caselle dentro un array per salvarle ed utilizzarle nella funzione notClickable
 
         // ogni volta che clicco aggancio una casella usando il this
         box.addEventListener('click', selectBox);
@@ -83,14 +85,15 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
             console.log('bomba!')
             clickedBox.classList.add('bomb-box');
 
-            gameOver(points);
+            gameOver(points, arrayBoxes);
 
         } else{
             clickedBox.classList.add('selected-box');
             points++;
             
-            if (points === squares - bombs.length ){
-                win(points);
+            //per vincere il punteggio deve essere lo stesso numero di numero delle celle meno il numero delle bombe(per recupere quest'ultimo posso usare la lunghezza dell'array in cui si sono le bombe)
+            if (points === squares - bombs.length ){ 
+                win(points, arrayBoxes);
             }
         }
 
@@ -132,19 +135,33 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
     }
 
     // Funzione per quando si vince --------
-    function win(points){
+    function win(points, arrayCells){
         console.log(`You win! Punteggio = ${points}`);
         message.style.display = 'flex';
         winnerLoser.innerHTML += "You win!";
         score.innerHTML += `Score = ${points}`;
+
+        notClickable(arrayCells); //chiamo la funzione per togliere i listener a tutte le celle e gli passo un parametro che poi andrò a sostituire con arrayBoxes nell'if che controlla se ho cliccato su una bomba o no
     }
 
     //Funzione per quando si perde --------
-    function gameOver(points){
+    function gameOver(points, arrayCells){
         console.log(`Game Over! Punteggio = ${points}`);
         message.style.display = 'flex';
         winnerLoser.innerHTML += "Game Over";
         score.innerHTML += `Score = ${points}`;
+
+        notClickable(arrayCells); //chiamo la funzione per togliere i listener a tutte le celle e gli passo un parametro che poi andrò a sostituire con arrayBoxes nell'if che controlla se ho cliccato su una bomba o no
+    }
+
+    // funzione che toglie tutti i Listener alle celle che non sono state selezionate quindi non sono più cliccabili
+    function notClickable(arrayBoxes){
+        // creo un ciclo usando l'array dove ho salvato tutte le caselline(arrayBoxes)
+        for(let i = 0; i < arrayBoxes.length; i++){
+            // dentro al ciclo salvo le varie caselline e poi tolgo il listener ad ogni casellina
+            const cell = arrayBoxes[i];         
+            cell.removeEventListener('click',selectBox);
+        }
     }
 
 }

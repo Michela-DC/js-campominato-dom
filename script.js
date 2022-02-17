@@ -8,6 +8,7 @@ const levels = document.getElementById('levels');
 const playBtn = document.getElementById('btn-play');
 const gameContainer = document.querySelector('.game-container');
 const message = document.querySelector('.message');
+const points = document.querySelector('.points');
 
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
@@ -83,24 +84,34 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
     // questa riga di codice fa in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
     gameContainer.innerHTML = ' ';
 
-    // funzione per selezionare le celle e deselezionarle
+    let count = 0;
+
+    // funzione per selezionare le celle e per non poterle più riselezionare
     function selectBox() {
         console.log(this.innerHTML);
         const clickedBox = this; //il this si riferisce alla cella
         const clickedNumber = parseInt(this.innerHTML); //aggiungendo .innerHTML mi riferisco al valore dentro la cella e devo fare il parseInt per trasformarlo da stringa in numero
         
+        gameContainer.onclick = function () {
+            count++;
+            console.log(count);
+        }
+
         if (numbers.includes(clickedNumber)){
             console.log('bomba!')
-            clickedBox.classList.add('bombBox');
-            message.style.display = 'block';
-            
+            clickedBox.classList.add('bomb-box');
+            message.style.display = 'flex';
+            points.innerHTML += `${count}`;
+
         } else{
-            clickedBox.classList.add('selectedBox');
+            clickedBox.classList.add('selected-box');
         }
 
         // una volta che ho cliccato su una data cella voglio che questa non sia più cliccabile quindi le devo rimuovere l'event listener del click
         clickedBox.removeEventListener('click', selectBox);
     }
+
+ 
 
     //Una volta che viene scelto il caso si possono creare le celle con un ciclo for e le inserisco dentro il game container
     for(let i = 1; i <= squares; i++){
@@ -110,12 +121,14 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         box.append(i);
         gameContainer.append(box);
 
+
         // ho semplificato l'addEventListener creando la funzione selectBox (e nel css ho creato una classe apposta per le caselle selzionate)
-        box.addEventListener('click', selectBox);    
+        box.addEventListener('click', selectBox); 
+
+        
     }
 }
 
 playBtn.addEventListener('click',startGame);
-
 
 

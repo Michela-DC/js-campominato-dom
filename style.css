@@ -103,13 +103,14 @@ main{
     gap: 10px;
 }
 
-.game-over{
+.winner-loser{
     font-weight: bold;
     font-size: 30px;
     color: red;
+    text-transform: uppercase;
 }
 
-.points{
+.score{
     font-size: 20px;
     color: black;
     text-align: center;

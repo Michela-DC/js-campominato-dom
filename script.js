@@ -8,14 +8,15 @@ const levels = document.getElementById('levels');
 const playBtn = document.getElementById('btn-play');
 const gameContainer = document.querySelector('.game-container');
 const message = document.querySelector('.message');
-const points = document.querySelector('.points');
+const winnerLoser = document.querySelector('.winner-loser');
+const score = document.querySelector('.score');
 
 // A seconda del livello si crea una griglia con numero di caselle diverso quindi:
 // di base devo creare un ciclo for per far generare le caselle poi a seconda del livello il ciclo prenderà valori diversi, ovvero quante volte cicla e la width delle celle cambia a seconda del numero di colonne
 const startGame = () => { //creo una funzione dove a seconda del caso si creaono griglie diverse
     // dichiaro le variabili per le caselle e le colonne che cambieranno a seconda del livello
 
-    let squares, columns, bombs;
+    let squares, columns, bombs, points = 0;
 
     // creo i casi a seconda del livello
     switch (levels.value){
@@ -54,25 +55,6 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
     // questa riga di codice fa in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
     gameContainer.innerHTML = ' ';
 
-    // funzione per selezionare le celle e per non poterle più riselezionare
-    function selectBox() {
-        console.log(this.innerHTML);
-        const clickedBox = this; //il this si riferisce alla cella
-        const clickedNumber = parseInt(this.innerHTML); //aggiungendo .innerHTML mi riferisco al valore dentro la cella e devo fare il parseInt per trasformarlo da stringa in numero
-
-        //verifico se il numero cliccato è una bomba usando la funzione isBomb che mi sono creata apposta
-        if ( isBomb(clickedNumber, bombs) ){ 
-            console.log('bomba!')
-            clickedBox.classList.add('bomb-box');
-            // message.style.display = 'flex';
-
-        } else{
-            clickedBox.classList.add('selected-box');
-        }
-
-        // una volta che ho cliccato su una data cella voglio che questa non sia più cliccabile quindi le devo rimuovere l'event listener del click
-        clickedBox.removeEventListener('click', selectBox);
-    }
 
     // ciclo for la creazione delle celle
     for(let i = 1; i <= squares; i++){
@@ -86,16 +68,44 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         box.addEventListener('click', selectBox);
     }
 
-    bombs = bombGenerator(16,1,squares);
+    bombs = bombGenerator(16,1,squares); //richiamo la funzione per generare le bombe passandogli i valori che mi servono
 
-    // funzione per la generazione di numeri random
+    // FUNZIONI -------
+
+    // funzione per selezionare le celle e per non poterle più riselezionare --------
+    function selectBox() {
+        console.log(this.innerHTML);
+        const clickedBox = this; //il this si riferisce alla cella
+        const clickedNumber = parseInt(this.innerHTML); //aggiungendo .innerHTML mi riferisco al valore dentro la cella e devo fare il parseInt per trasformarlo da stringa in numero
+
+        //verifico se il numero cliccato è una bomba usando la funzione isBomb che mi sono creata apposta
+        if ( isBomb(clickedNumber, bombs) ){ 
+            console.log('bomba!')
+            clickedBox.classList.add('bomb-box');
+
+            gameOver(points);
+
+        } else{
+            clickedBox.classList.add('selected-box');
+            points++;
+            
+            if (points === squares - bombs.length ){
+                win(points);
+            }
+        }
+
+        // una volta che ho cliccato su una data cella voglio che questa non sia più cliccabile quindi le devo rimuovere l'event listener del click
+        clickedBox.removeEventListener('click', selectBox);
+    }
+
+    // funzione per la generazione di numeri random --------
     function getRandomIntInclusive(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
     }
 
-    // creo una funzione per la generazione random dei numeri corrispondenti alle bombe
+    // creo una funzione per la generazione random dei numeri corrispondenti alle bombe --------
     function bombGenerator(bombsNum, min, max){
         const  array = [];
 
@@ -111,7 +121,7 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         return array;
     }
 
-    //funzione per verificare se è una bomba
+    //funzione per verificare se è una bomba --------
     function isBomb(num, bombs){
         if( bombs.includes(parseInt(num)) ){
             return true;
@@ -119,6 +129,22 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         } else {
             return false;
         }
+    }
+
+    // Funzione per quando si vince --------
+    function win(points){
+        console.log(`You win! Punteggio = ${points}`);
+        message.style.display = 'flex';
+        winnerLoser.innerHTML += "You win!";
+        score.innerHTML += `Score = ${points}`;
+    }
+
+    //Funzione per quando si perde --------
+    function gameOver(points){
+        console.log(`Game Over! Punteggio = ${points}`);
+        message.style.display = 'flex';
+        winnerLoser.innerHTML += "Game Over";
+        score.innerHTML += `Score = ${points}`;
     }
 
 }

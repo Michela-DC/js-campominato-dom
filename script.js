@@ -7,9 +7,12 @@ const main = document.getElementsByTagName('main')[0];
 const levels = document.getElementById('levels');
 const playBtn = document.getElementById('btn-play');
 const gameContainer = document.querySelector('.game-container');
+const initialMessage = document.querySelector('.initial-message');
 const message = document.querySelector('.message');
 const winnerLoser = document.querySelector('.winner-loser');
 const score = document.querySelector('.score');
+
+initialMessage.innerHTML = 'Scegli un livello!';
 
 // A seconda del livello si crea una griglia con numero di caselle diverso quindi:
 // di base devo creare un ciclo for per far generare le caselle poi a seconda del livello il ciclo prenderà valori diversi, ovvero quante volte cicla e la width delle celle cambia a seconda del numero di colonne
@@ -53,8 +56,14 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
             break;
     }
 
-    // questa riga di codice fa in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
-    gameContainer.innerHTML = ' ';
+    initialMessage.style.display = 'none'; //metto il messaggio iniziale in display none quando scelgo un livello
+    gameContainer.innerHTML = ' '; // faccio in modo che il gameContainer, una volta scelto il livello, prima venga svuotato e poi dopo con il for ci ricreo dentro un'altra griglia
+    
+    // ogni volta che clicco su un nuovo livello il messaggio va in display none in modo che, quando perdo o vinco una partita in un certo livello, posso poi andare a selezionare un altro livello e rigiocare
+    message.style.display = 'none'; 
+    // svuoto sia winnerLoser che score ogni volta che viene cliccato play
+    winnerLoser.innerHTML = ' ';
+    score.innerHTML = ' '
 
 
     // ciclo for la creazione delle celle
@@ -154,7 +163,7 @@ const startGame = () => { //creo una funzione dove a seconda del caso si creaono
         notClickable(arrayCells); //chiamo la funzione per togliere i listener a tutte le celle e gli passo un parametro che poi andrò a sostituire con arrayBoxes nell'if che controlla se ho cliccato su una bomba o no
     }
 
-    // funzione che toglie tutti i Listener alle celle che non sono state selezionate quindi non sono più cliccabili
+    // funzione che toglie tutti i Listener alle celle che non sono state selezionate quindi non sono più cliccabili --------
     function notClickable(arrayBoxes){
         // creo un ciclo usando l'array dove ho salvato tutte le caselline(arrayBoxes)
         for(let i = 0; i < arrayBoxes.length; i++){

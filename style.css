@@ -89,6 +89,14 @@ main{
     background-color: red;
 }
 
+.initial-message{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .message{
     width: 350px;
     height: 350px;
